@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+
+<head>
+    <script src="../../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../../node_modules/@polymer/test-fixture/test-fixture.js"></script>
+    <script src="../../node_modules/mocha/mocha.js"></script>
+    <script src="../../node_modules/chai/chai.js"></script>
+    <script src="../../node_modules/sinon/pkg/sinon.js"></script>
+    <script src="../../node_modules/wct-mocha/wct-mocha.js"></script>
+    <script type="module" src="../../src/main-element/book-train.js"></script>
+</head>
+
+<body>
+    <test-fixture id="bookTrain">
+        <template>
+            <book-train></book-train>
+        </template>
+    </test-fixture>
+    <test-fixture id="ajaxCall">
+        <template>
+            <iron-ajax  url="/responds_to_get_with_json"></iron-ajax>
+        </template>
+    </test-fixture>
+    <script>
+
+
+        describe('When the component is rendered', function () {
+            beforeEach(function () {
+                element = fixture('bookTrain');
+                elementShadowRoot = element.shadowRoot;
+            });
+            it('should render the component', function () {
+                expect(element).to.be.exist;
+                expect(elementShadowRoot).to.be.exist;
+            });
+            it('should render the From input field', () => {
+                let from = elementShadowRoot.querySelector('#from')
+                expect(from).to.be.exist;
+            });
+
+            it('should render the Destination input field', () => {
+                let destination = elementShadowRoot.querySelector('#destination')
+                expect(destination).to.be.exist;
+            });
+            it('should render the NoOfTravellers input field', () => {
+                let noOfTraveller = elementShadowRoot.querySelector('#noOfTraveller')
+                expect(noOfTraveller).to.be.exist;
+            });
+            it('should render the Table  ', () => {
+                let table = elementShadowRoot.querySelector('#table')
+                expect(table).to.be.exist;
+            });
+            it('should render the render searchBtn button', () => {
+                let searchBtn = elementShadowRoot.querySelector('#searchBtn');
+                let from = elementShadowRoot.querySelector('#from');
+                let destination = elementShadowRoot.querySelector('#destination');
+                expect(searchBtn).to.be.exist;
+                expect(searchBtn.innerHTML).to.be.equal('Search');
+            });
+
+            describe('AND when button is clicked', () => {
+                let sinonSpy;
+                let searchBtn;
+                beforeEach(() => {
+                    searchBtn = elementShadowRoot.querySelector('#searchBtn');
+                    sinonSpy = sinon.spy();
+                    searchBtn.addEventListener('click', sinonSpy);
+                });
+                it('should call handleSearch method once', function (done) {
+                    flush(function () {
+                        searchBtn.click();
+                        expect(sinonSpy.callCount).to.be.equal(1)
+                        done();
+                    })
+                })
+                   
+        describe('<iron-ajax>', function () {
+          var ajax;
+          var request;
+          var server;
+          var responseHeaders = {
+            json: { 'Content-Type': 'application/json' }
+          };
+          beforeEach(() => {
+            server = sinon.fakeServer.create();
+            server.respondWith(
+              'GET','/responds_to_get_with_json',
+              [200, responseHeaders.json, '{ "success":true}']
+            );
+
+          });
+          afterEach(() => {
+            server.restore();
+          });
+          describe('when making simple GET requests for JSON', function () {
+            beforeEach(() => {
+              ajax = fixture('ajaxCall');
+            })
+            it('has sane defaults that love you', function () {
+              request = ajax.generateRequest();
+              server.respond();
+              expect(request.response).to.be.ok;
+              expect(request.response).to.be.an('object');
+              expect(request.response.success).to.be.equal(true);
+            });
+          });
+        });
+                    it('should call render the booknow button', function (done) {
+                    flush(function () {
+                        searchBtn.click();
+                        expect(sinonSpy.callCount).to.be.equal(1)
+                        done();
+                    })
+                })
+                })
+            })
+
+
+    </script>
+</body>
+
+</html>

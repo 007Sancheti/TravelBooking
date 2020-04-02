@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+
+<head>
+  <script src="../../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../../node_modules/@polymer/test-fixture/test-fixture.js"></script>
+  <script src="../../node_modules/mocha/mocha.js"></script>
+  <script src="../../node_modules/chai/chai.js"></script>
+  <script src="../../node_modules/sinon/pkg/sinon.js"></script>
+  <script src="../../node_modules/wct-mocha/wct-mocha.js"></script>
+  <script type="module" src="../../src/main-element/login-page.js"></script>
+</head>
+
+<body>
+  <test-fixture id="loginFixture">
+    <template>
+      <login-page></login-page>
+    </template>
+  </test-fixture>
+  <!-- create test fixture template -->
+  <test-fixture id="ajaxCall">
+    <template>
+      <iron-ajax url="/responds_to_get_with_500_error_json"></iron-ajax>
+    </template>
+  </test-fixture>
+  <script>
+
+    describe('When the component is rendered', function () {
+      beforeEach(function () {
+        element = fixture('loginFixture');
+        elementShadowRoot = element.shadowRoot;
+      });
+      it('should render the component', function () {
+        expect(element).to.be.exist;
+        expect(elementShadowRoot).to.be.exist;
+      });
+      it('should render the mobile number input field', () => {
+        let mobileNumber = elementShadowRoot.querySelector('#mobileNumber')
+        expect(mobileNumber).to.be.exist;
+      });
+
+      it('should render the password input field', () => {
+        let password = elementShadowRoot.querySelector('#password')
+        expect(password).to.be.exist;
+      });
+      it('should render the request login button', () => {
+        let loginBtn = elementShadowRoot.querySelector('#loginBtn');
+        let mobileNumber = elementShadowRoot.querySelector('#mobileNumber');
+        expect(loginBtn).to.be.exist;
+        expect(loginBtn.innerHTML).to.be.equal('LogIn');
+      });
+
+      describe('AND when button is clicked', () => {
+        let sinonSpy;
+        let loginBtn;
+        beforeEach(() => {
+          loginBtn = elementShadowRoot.querySelector('#loginBtn');
+          sinonSpy = sinon.spy();
+          loginBtn.addEventListener('click', sinonSpy);
+        });
+        it('should call signIn() method once', function (done) {
+          flush(function () {
+            loginBtn.click();
+            expect(sinonSpy.callCount).to.be.equal(1)
+            done();
+          })
+        })
+
+        describe('<iron-ajax>', function () {
+          var ajax;
+          var request;
+          var server;
+          var responseHeaders = {
+            json: { 'Content-Type': 'application/json' }
+          };
+          beforeEach(() => {
+            server = sinon.fakeServer.create();
+            server.respondWith(
+              'GET',
+              [200, responseHeaders.json, '{ "name": "Sparsh","emailId": "Sparsh@mail.com","sapId": "51823861","phone": 8447244781,"password": "123", "id": 1}']
+            );
+            server.respondWith(
+              'GET',
+              '/responds_to_get_with_500_error_json',
+              [500, responseHeaders.json, '{"success":false}']
+            );
+
+          });
+          afterEach(() => {
+            server.restore();
+          });
+          describe('when making simple GET requests for JSON', function () {
+            beforeEach(() => {
+              ajax = fixture('ajaxCall');
+            })
+            it('has sane defaults that love you', function () {
+              request = ajax.generateRequest();
+              server.respond();
+              expect(request.response).to.be.ok;
+              expect(request.response).to.be.an('object');
+              expect(request.response.success).to.be.equal(false);
+            });
+          });
+        });
+      })
+    })
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>Tests</title>
+  <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../node_modules/mocha/mocha.js"></script>
+  <script src="../node_modules/chai/chai.js"></script>
+  <script src="../node_modules/wct-mocha/wct-mocha.js"></script>
+</head>
+<body>
+  <script>
+    WCT.loadSuites([
+      // Load 'my-view1.html' test suite, using native shadow dom
+      './main-element/registration-page_test.html?dom=shadow',
+      './main-element/login-page_test.html?dom=shadow',
+      './main-element/book-train_test.html?dom=shadow',
+      './main-element/book-tickets_test.html?dom=shadow',
+      // './main-element/ticket-summary_test.html?dom=shadow'
+      // Load 'my-view1.html' test suite, using shadydom
+      // 'my-view1.html?wc-shadydom=true',
+    ]);
+  </script>
+</body>
+
+</html>
